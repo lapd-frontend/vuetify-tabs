@@ -6,7 +6,7 @@
           <h2>
             <v-icon>build</v-icon>&nbsp; Settings
           </h2>
-          &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; Mode: {{radios || 'null'}}
+          <h3 style="margin-left: 35px; margin-top: 5px">Mode: {{radios || 'null'}}</h3>
         </div>
         <v-divider></v-divider>
         <v-card>

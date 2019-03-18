@@ -62,13 +62,37 @@
   };
 })(jQuery);
 
+var hoverData;
+var highlightData;
+var sampleHighlight = [];
+var sampleHover = [];
+var tempvar;
+var tempvar2;
+var somedata;
+import { bridgeData } from './bridge';
+
+export var localdata = [];
+
+function alertMe() {
+  var myarr = []
+  myarr.push(somedata)
+  return myarr
+}
+
+
+function saveData(data, arr) {
+  arr.push(data);
+}
+
 function mainHighlighter() {
+
+  var testarray = []
+
   var indexPosition;
   var highlightDiv = document.querySelector(".dataspace");
   var menu = $("#highlight_menu");
   var hoverActive;
-  var hoverData;
-  var highlightData;
+
   var isClicked;
   var label;
   var labeledData = [];
@@ -85,10 +109,6 @@ function mainHighlighter() {
   var initialTokenization = $(".dataspace").lettering("words");
   const tokenizedWords = initialTokenization["0"].children;
 
-  // axios
-  //   .get(url)
-  //   .then(data => console.log(data.data))
-  //   .catch(error => console.log(error));
 
   highlightDiv.addEventListener("click", function (event) {
     highlightMe();
@@ -97,9 +117,48 @@ function mainHighlighter() {
   $("ul li a").on("click", function () {
     label = $(this).attr("title");
     if (highlightData === undefined) {
-      labeler(hoverData, label);
+      //labeler(hoverData, label);
+      //sampleHover.push(hoverData);
+      http://localhost:8081/files
+
+      fetch('http://localhost:8081/text', {
+        method: 'post',
+        body: JSON.stringify({
+          text: hoverData
+        }), // data can be `string` or {object}!
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(function (response) {
+        return response.json();
+      })
+      // sampleHover.push(tempvar)
+      // saveData(tempvar, sampleHover)
+      // tempvar = null;np
+      // hoverData = null;
+
+
     } else {
-      labeler(highlightData, label);
+
+      fetch('http://localhost:8081/text', {
+        method: 'post',
+        body: JSON.stringify({
+          text: highlightData
+        }), // data can be `string` or {object}!
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(function (response) {
+        return response.json();
+      })
+      // sampleHighlight.push(tempvar2)
+
+
+      // saveData(tempvar2, sampleHighlight)
+      // tempvar2 = null;
+      // highlightData = null;
+      // labeler(highlightData, label);
+      //sampleHighlight.push(highlightData);
     }
     //labeler(data, label);
     //console.log(labeledData);
@@ -158,6 +217,11 @@ function mainHighlighter() {
       var textRange = sel.createRange();
       if (textRange.text) {
         textRange.expand("word");
+
+        while (/\s$/.test(textRange.text)) {
+          textRange.moveEnd("character", -1);
+        }
+        textRange.select();
       }
     }
     temp = sel.toString();
@@ -205,7 +269,7 @@ function mainHighlighter() {
     menu
       .css({
         left: p.left + p.width / 2 - menu.width() / 2,
-        top: p.top + window.scrollY - 435,
+        top: p.top + window.scrollY - 425,
         display: "block",
         opacity: 0
       })
@@ -224,29 +288,28 @@ function mainHighlighter() {
     menu.hide().removeClass("highlight_menu_animate");
   }
 
-  function labeler(data, label) {
-    // labeledData.push({
-    //   user: user.name,
-    //   filename: file.filename,
-    //   data: data,
-    //   label: label
-    // });
-    var postdata = {
-      user: user.name,
-      filename: file.filename,
-      data: data,
-      label: label,
-      datestamp: moment().format("YYYY/MM/DD - h:mm:ssa Z")
-    };
+  // function labeler(data, label) {
+  //   // labeledData.push({
+  //   //   user: user.name,
+  //   //   filename: file.filename,
+  //   //   data: data,
+  //   //   label: label
+  //   // });
+  //   var postdata = {
+  //     user: user.name,
+  //     filename: file.filename,
+  //     data: data,
+  //     label: label,
+  //     datestamp: moment().format("YYYY/MM/DD - h:mm:ssa Z")
+  //   };
 
-    //axios.post(url, postdata);
-  }
+  //   //axios.post(url, postdata);
+  // }
 
   hoverMe();
 
   // console.log(moment().format());
   // console.log(moment().format("YYYY/MM/DD - h:mm:ssa Z"));
-
 }
 
-export default mainHighlighter
+export { mainHighlighter, sampleHighlight, sampleHover, alertMe }
