@@ -62,12 +62,9 @@
     </v-container>
 
     <v-divider></v-divider>
-    <p>{{selectedRadioCategory}}</p>
-    <p>{{checkboxItems}}</p>
-
-    <section>
-      <pre>{{actualContent[index]}}</pre>
-    </section>
+    <!-- <p>{{selectedRadioCategory}}</p>
+    <p>{{checkboxItems}}</p>-->
+    <section style="font-size: 2.5em;">{{actualContent[index]}}</section>
 
     <!-- <template v-for="(content,index) in contents">
       <section :key="index">{{content}}</section>
@@ -102,6 +99,8 @@ export default {
     contents: {
       immediate: true,
       handler: function() {
+        this.index = 0;
+        this.actualContent = [];
         this.parser(this.contents, "$");
       }
     }

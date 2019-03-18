@@ -232,6 +232,9 @@ function mainHighlighter() {
         break;
       }
     }
+    // console.log((highlightPosition.bottom + highlightPosition.left + highlightPosition.right
+    //   + highlightPosition.x + highlightPosition.y) / 5)
+
     highlightData = output;
     output = `"${output}"`;
     //console.log(output);
@@ -248,9 +251,11 @@ function mainHighlighter() {
             return false;
           } else {
             hoverData = tokenizedWords[i].innerText;
+            
             //console.log(hoverData);
             var p = tokenizedWords[i].getBoundingClientRect();
             $(event.target).addClass("addHighlight");
+            console.log(p)
             callMenu(p);
           }
         })

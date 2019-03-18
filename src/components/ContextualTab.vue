@@ -19,7 +19,13 @@
       </template>
     </v-combobox>
 
-    <section v-if="show" class="dataspace" v-html="finalContents"></section>
+    <section
+      v-if="show"
+      class="dataspace"
+      v-html="actualContent[index]"
+      style="font-size: 2.5em;"
+      @click="getIndex(actualContent[index], $event)"
+    ></section>
 
     <div id="highlight_menu" style="display:none;">
       <ul class="side-by-side">
@@ -55,32 +61,26 @@
 
       <div class="caret"></div>
     </div>
-    <v-btn id="btn" class="success">Fail</v-btn>
-    <div>{{ highlightData }} {{ hoverData }}</div>
+    <v-btn id="btn" class="success" @click="submitData(), updateComponent()">Next</v-btn>
   </div>
 </template>
 
 <script>
-import {
-  mainHighlighter,
-  sampleHighlight,
-  sampleHover,
-  alertMe
-} from "@/assets/js/highlight.js";
-import { bridgeData } from "@/assets/js/bridge.js";
+import { mainHighlighter } from "@/assets/js/highlight.js";
 export default {
-  props: ["contents"],
+  props: {
+    contents: Array
+  },
   updated() {
     mainHighlighter();
   },
   data() {
     return {
       show: true,
-      highlightData: sampleHighlight,
-      hoverData: sampleHover,
-      alerter: alertMe(),
-      sampledata: bridgeData,
       finalContents: this.contents,
+      index: 0,
+      indexer: 0,
+      tempdata: null,
       actualContent: [],
       chips: [
         "Programming",
@@ -103,10 +103,21 @@ export default {
       ]
     };
   },
+  // watch: {
+  //   contents(val) {
+  //     this.finalContents = val;
+  //     this.updateComponent();
+  //   }
+  // },
   watch: {
-    contents(val) {
-      this.finalContents = val;
-      this.updateComponent();
+    contents: {
+      immediate: true,
+      handler: function() {
+        this.index = 0;
+        this.actualContent = [];
+        this.parser(this.contents, "$");
+        this.updateComponent();
+      }
     }
   },
   methods: {
@@ -120,6 +131,24 @@ export default {
     remove(item) {
       this.chips.splice(this.chips.indexOf(item), 1);
       this.chips = [...this.chips];
+    },
+    parser(data, delimiter) {
+      this.actualContent = data.split(delimiter);
+    },
+    submitData() {
+      this.index += 1;
+      if (this.index === this.actualContent.length - 1) {
+        alert("Reached end of file");
+        return;
+      }
+    },
+    getIndex(str, event) {
+      //alert(str);
+      this.tempdata = event.target.toString();
+      //this.indexer = str.indexOf(event.target);
+    },
+    alertMe() {
+      alert("hi");
     }
   }
 };
