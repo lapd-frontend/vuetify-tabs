@@ -74,23 +74,43 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   props: {
     contents: Array
   },
+  mounted() {
+    alert("hi");
+    fetch("http://localhost:8081/label")
+      .then(response => response.json())
+      //.then(data => console.log(JSON.stringify(data)))
+      .then(data => {
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].type == "categorical") {
+            this.chips.push(data[i].label);
+          }
+        }
+        this.initialLength = this.chips.length;
+      });
+  },
+  updated() {
+    this.$watch("chips", () => {
+      if (!(this.chips.length < this.initialLength)) {
+        this.lastItem = this.chips[this.chips.length - 1];
+      }
+    });
+  },
   data() {
     return {
       radios: "Multi-class",
+      lastItem: "",
+      initialLength: 0,
+      temp: null,
       index: 0,
       actualContent: [],
       selectedRadioCategory: "",
       checkboxItems: [],
-      chips: [
-        "Programming",
-        "Playing video games",
-        "Watching movies",
-        "Sleeping"
-      ],
+      chips: [],
       items: ["Streaming", "Eating"],
       selected: ["John"]
     };
@@ -103,6 +123,18 @@ export default {
         this.actualContent = [];
         this.parser(this.contents, "$");
       }
+    },
+    chips: function() {
+      //alert(this.chips.pop());
+      // axios.post('http://localhost:8081/label', {
+      // })
+    },
+    lastItem: function() {
+      axios.post("http://localhost:8081/label", {
+        label: this.lastItem,
+        type: "categorical",
+        file_id: "002"
+      });
     }
   },
   methods: {

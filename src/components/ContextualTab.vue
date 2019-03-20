@@ -30,7 +30,7 @@
     <div id="highlight_menu" style="display:none;">
       <ul class="side-by-side">
         <li id="first-menu">
-          <a href="#" title="Skill">
+          <a href="#" title="Skill" class="menuItem" @click="getString">
             <img
               src="data:image/svg+xml;utf8;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iaXNvLTg4NTktMSI/Pgo8IS0tIEdlbmVyYXRvcjogQWRvYmUgSWxsdXN0cmF0b3IgMTYuMC4wLCBTVkcgRXhwb3J0IFBsdWctSW4gLiBTVkcgVmVyc2lvbjogNi4wMCBCdWlsZCAwKSAgLS0+CjwhRE9DVFlQRSBzdmcgUFVCTElDICItLy9XM0MvL0RURCBTVkcgMS4xLy9FTiIgImh0dHA6Ly93d3cudzMub3JnL0dyYXBoaWNzL1NWRy8xLjEvRFREL3N2ZzExLmR0ZCI+CjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiBpZD0iQ2FwYV8xIiB4PSIwcHgiIHk9IjBweCIgd2lkdGg9IjI0cHgiIGhlaWdodD0iMjRweCIgdmlld0JveD0iMCAwIDUxMiA1MTIiIHN0eWxlPSJlbmFibGUtYmFja2dyb3VuZDpuZXcgMCAwIDUxMiA1MTI7IiB4bWw6c3BhY2U9InByZXNlcnZlIj4KPGc+Cgk8cGF0aCBkPSJNMjU2LDBDMTE0LjYwOSwwLDAsMTE0LjYwOSwwLDI1NmMwLDE0MS4zOTEsMTE0LjYwOSwyNTYsMjU2LDI1NmMxNDEuMzkxLDAsMjU2LTExNC42MDksMjU2LTI1NiAgIEM1MTIsMTE0LjYwOSwzOTcuMzkxLDAsMjU2LDB6IE0yNTYsNDcyYy0xMTkuMjk3LDAtMjE2LTk2LjcwMy0yMTYtMjE2UzEzNi43MDMsNDAsMjU2LDQwczIxNiw5Ni43MDMsMjE2LDIxNlMzNzUuMjk3LDQ3MiwyNTYsNDcyeiAgICIgZmlsbD0iIzAwMDAwMCIvPgoJPGc+CgkJPHBhdGggZD0iTTI0OS43MDMsMjAxLjI1SDE4OHYtMjVoMTkuMzEyYzYuODU5LDAsMTMuNDIyLTEuMjE5LDE5LjUtMy41OTRjNi4xNzItMi4zNzUsMTEuNDM4LTUuNjQxLDE1Ljc5Ny05Ljc5NyAgICBjNC4zNTgtNC4yMDMsNy45MjItOS4yNSwxMC41NDctMTUuMjM0YzIuNzM0LTUuOTA2LDQuMDQ3LTEyLjUsNC4wNDctMTkuNjI1SDI4NHYyNTZoLTM0LjI5N1YyMDEuMjV6IiBmaWxsPSIjMDAwMDAwIi8+Cgk8L2c+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPGc+CjwvZz4KPC9zdmc+Cg=="
             >
@@ -67,9 +67,22 @@
 
 <script>
 import { mainHighlighter } from "@/assets/js/highlight.js";
+
 export default {
   props: {
     contents: Array
+  },
+  mounted() {
+    fetch("http://localhost:8081/label")
+      .then(response => response.json())
+      //.then(data => console.log(JSON.stringify(data)))
+      .then(data => {
+        for (let i = 0; i < data.length; i++) {
+          if (data[i].type == "contextual") {
+            this.chips.push(data[i].label);
+          }
+        }
+      });
   },
   updated() {
     mainHighlighter();
@@ -81,13 +94,9 @@ export default {
       index: 0,
       indexer: 0,
       tempdata: null,
+      tempstring: "",
       actualContent: [],
-      chips: [
-        "Programming",
-        "Playing video games",
-        "Watching movies",
-        "Sleeping"
-      ],
+      chips: [],
       items: ["Streaming", "Eating"],
       selected: ["John"],
       icons: [
@@ -149,6 +158,12 @@ export default {
     },
     alertMe() {
       alert("hi");
+    },
+    getString() {
+      fetch("http://localhost:8081/text")
+        .then(response => response.json())
+        //.then(data => console.log(JSON.stringify(data)))
+        .then(data => (this.tempstring = data.pop().text));
     }
   }
 };

@@ -251,11 +251,11 @@ function mainHighlighter() {
             return false;
           } else {
             hoverData = tokenizedWords[i].innerText;
-            
+
             //console.log(hoverData);
             var p = tokenizedWords[i].getBoundingClientRect();
             $(event.target).addClass("addHighlight");
-            console.log(p)
+            //console.log(p)
             callMenu(p);
           }
         })
