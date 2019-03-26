@@ -9,9 +9,9 @@
         <v-card-text>
           <v-container grid-list-md>
             <v-layout wrap>
-              <v-flex xs12>
+              <!-- <v-flex xs12>
                 <v-text-field label="Project Name" required></v-text-field>
-              </v-flex>
+              </v-flex>-->
               <v-flex xs12>
                 <v-flex
                   xs12
@@ -34,7 +34,7 @@
                 </v-flex>
               </v-flex>
               <v-flex xs12>
-                <v-textarea solo name label="File Description"></v-textarea>
+                <v-textarea solo name label="File Description" v-model="fileDescription"></v-textarea>
               </v-flex>
             </v-layout>
           </v-container>

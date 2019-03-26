@@ -25,9 +25,14 @@
               prepend-icon="add"
               solo
               multiple
+              @input="alertPop()"
             >
               <template slot="selection" slot-scope="data">
-                <v-chip :selected="data.selected" close @input="remove(data.item)">
+                <v-chip
+                  :selected="data.selected"
+                  close
+                  @input="remove(data.item), alertMe(data.item)"
+                >
                   <strong>{{ data.item }}</strong>&nbsp;
                   <!-- <span>(interest)</span> -->
                 </v-chip>
@@ -80,7 +85,7 @@ export default {
     contents: Array
   },
   mounted() {
-    alert("hi");
+    //alert("hi");
     fetch("http://localhost:8081/label")
       .then(response => response.json())
       //.then(data => console.log(JSON.stringify(data)))
@@ -93,13 +98,13 @@ export default {
         this.initialLength = this.chips.length;
       });
   },
-  updated() {
-    this.$watch("chips", () => {
-      if (!(this.chips.length < this.initialLength)) {
-        this.lastItem = this.chips[this.chips.length - 1];
-      }
-    });
-  },
+  // updated() {
+  //   this.$watch("chips", () => {
+  //     if (!(this.chips.length < this.initialLength)) {
+  //       this.lastItem = this.chips[this.chips.length - 1];
+  //     }
+  //   });
+  // },
   data() {
     return {
       radios: "Multi-class",
@@ -107,6 +112,7 @@ export default {
       initialLength: 0,
       temp: null,
       index: 0,
+      counter: 0,
       actualContent: [],
       selectedRadioCategory: "",
       checkboxItems: [],
@@ -128,20 +134,33 @@ export default {
       //alert(this.chips.pop());
       // axios.post('http://localhost:8081/label', {
       // })
-    },
-    lastItem: function() {
-      axios.post("http://localhost:8081/label", {
-        label: this.lastItem,
-        type: "categorical",
-        file_id: "002"
-      });
     }
+    // lastItem: function() {
+    //   axios.post("http://localhost:8081/label", {
+    //     label: this.lastItem,
+    //     type: "categorical",
+    //     file_id: "002"
+    //   });
+    // }
   },
   methods: {
     remove(item) {
       this.chips.splice(this.chips.indexOf(item), 1);
       this.chips = [...this.chips];
     },
+    alertMe(item) {
+      alert("hi" + item + this.counter);
+      this.counter++;
+    },
+    alertPop() {
+      axios.post("http://localhost:8081/label", {
+        label: this.chips[this.chips.length - 1],
+        type: "categorical",
+        file_id: "001"
+      });
+    },
+    removeLabel() {},
+    addLabel() {},
     submitData() {
       this.index += 1;
       if (this.index === this.actualContent.length - 1) {
