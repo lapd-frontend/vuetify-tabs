@@ -25,7 +25,7 @@
               prepend-icon="add"
               solo
               multiple
-              @input="alertPop()"
+              @input="insertLabel()"
             >
               <template slot="selection" slot-scope="data">
                 <v-chip
@@ -83,7 +83,8 @@ import axios from "axios";
 import md5 from "md5";
 export default {
   props: {
-    contents: Array
+    contents: Array,
+    file: String
   },
   mounted() {
     //alert("hi");
@@ -136,7 +137,7 @@ export default {
         axios.post("http://localhost:8081/content", {
           _id: md5(this.actualContent[i]),
           content: this.actualContent[i],
-          file_id: "001"
+          file_id: this.file
         });
       }
     },
@@ -162,21 +163,38 @@ export default {
       alert("hi" + item + this.counter);
       this.counter++;
     },
-    alertPop() {
+    insertLabel() {
       axios.post("http://localhost:8081/label", {
         label: this.chips[this.chips.length - 1],
-        type: "categorical",
-        file_id: "001"
+        type: "categorical"
       });
     },
     removeLabel() {},
     addLabel() {},
     submitData() {
-      this.index += 1;
       if (this.index === this.actualContent.length - 1) {
         alert("Reached end of file");
         return;
+      } else {
+        if (this.radios === "Multi-class") {
+          axios.post("http://localhost:8081/labeledcontent", {
+            label: this.selectedRadioCategory,
+            type: "categorical",
+            file_id: this.file,
+            content_id: md5(this.actualContent[this.index])
+          });
+          // alert(this.actualContent[this.index]);
+        } else {
+          axios.post("http://localhost:8081/labeledcontent", {
+            label: this.checkboxItems,
+            type: "categorical",
+            file_id: this.file,
+            content_id: md5(this.actualContent[this.index])
+          });
+          // alert(this.checkboxItems);
+        }
       }
+      this.index += 1;
     },
     parser(data, delimiter) {
       // var output = [];

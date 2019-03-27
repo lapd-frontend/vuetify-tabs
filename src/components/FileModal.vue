@@ -68,6 +68,11 @@ export default {
       fileId: ""
     };
   },
+  watch: {
+    fileId: function() {
+      this.passFileId();
+    }
+  },
   methods: {
     pickFile() {
       this.$refs.image.click();
@@ -86,6 +91,9 @@ export default {
         _id: this.fileId,
         name: this.fileName
       });
+    },
+    passFileId() {
+      this.$emit("pass-id", this.fileId);
     }
   }
 };

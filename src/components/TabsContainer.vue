@@ -9,7 +9,11 @@
       </v-layout>
     </v-container>
 
-    <file-modal :state="buttonState()" @load="(text = $event); outputText()"></file-modal>
+    <file-modal
+      :state="buttonState()"
+      @load="(text = $event); outputText()"
+      @pass-id="(fileId = $event);"
+    ></file-modal>
     <file-list :state="buttonState()"></file-list>
     <v-tabs
       v-model="active_tab"
@@ -31,14 +35,14 @@
       <v-tab-item>
         <v-card flat>
           <v-card-text>
-            <CategoricalTab :contents="catText"></CategoricalTab>
+            <CategoricalTab :contents="catText" :file="fileId"></CategoricalTab>
           </v-card-text>
         </v-card>
       </v-tab-item>
       <v-tab-item>
         <v-card flat>
           <v-card-text>
-            <ContextualTab :contents="conText"></ContextualTab>
+            <ContextualTab :contents="conText" :file="fileId"></ContextualTab>
           </v-card-text>
         </v-card>
       </v-tab-item>
@@ -62,6 +66,7 @@ export default {
   },
   data() {
     return {
+      fileId: "",
       text: "",
       labelerName: "",
       catText: "",
