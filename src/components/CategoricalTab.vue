@@ -80,6 +80,7 @@
 
 <script>
 import axios from "axios";
+import md5 from "md5";
 export default {
   props: {
     contents: Array
@@ -128,6 +129,15 @@ export default {
         this.index = 0;
         this.actualContent = [];
         this.parser(this.contents, "$");
+      }
+    },
+    actualContent: function() {
+      for (let i = 0; i < this.actualContent.length; i++) {
+        axios.post("http://localhost:8081/content", {
+          _id: md5(this.actualContent[i]),
+          content: this.actualContent[i],
+          file_id: "001"
+        });
       }
     },
     chips: function() {

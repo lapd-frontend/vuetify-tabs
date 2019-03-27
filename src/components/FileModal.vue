@@ -51,6 +51,8 @@
 
 <script>
 // import FileUpload from "../components/FileUpload.vue";
+import axios from "axios";
+import md5 from "md5";
 export default {
   props: {
     state: Boolean
@@ -62,7 +64,8 @@ export default {
     return {
       dialog: false,
       fileName: "",
-      fileDescription: ""
+      fileDescription: "",
+      fileId: ""
     };
   },
   methods: {
@@ -75,9 +78,14 @@ export default {
       const reader = new FileReader();
 
       this.fileName = temp[0].name;
+      this.fileId = md5(this.fileName);
       reader.onload = e => this.$emit("load", e.target.result);
       reader.readAsText(file);
       // reader.readAsText(file)
+      axios.post("http://localhost:8081/files", {
+        _id: this.fileId,
+        name: this.fileName
+      });
     }
   }
 };
