@@ -12,7 +12,11 @@
       @input="insertLabel()"
     >
       <template slot="selection" slot-scope="data">
-        <v-chip :selected="data.selected" close @input="remove(data.item)">
+        <v-chip
+          :selected="data.selected"
+          close
+          @input="remove(data.item), alertMe(data.item), updateComponent()"
+        >
           <v-avatar class="grey darken-3 white--text" v-text="(data.index)+1"></v-avatar>
           <strong>{{ data.item }}</strong>&nbsp;
           <!-- <span>(interest)</span> -->
@@ -31,8 +35,9 @@
     <div id="highlight_menu" style="display:none;">
       <ul class="side-by-side">
         <li v-for="(data, index) in chips" :key="data" @click="getString(data)">
-          <a href="#" :title="data">
-            <img :src="icons[index]">
+          <a href="#" :title="data" style="text-decoration: none !important; color: white">
+            <!-- <img :src="icons[index]"> -->
+            <span id="index_num">{{(index)+1}}</span>
           </a>
         </li>
         <!-- 
@@ -172,8 +177,28 @@ export default {
       this.tempdata = event.target.toString();
       //this.indexer = str.indexOf(event.target);
     },
-    alertMe() {
-      alert("hi");
+    alertMe(item) {
+      //alert("hi" + item + this.counter);
+      fetch("http://localhost:8081/label")
+        .then(response => response.json())
+        //.then(data => console.log(JSON.stringify(data)))
+        .then(data => {
+          for (let i = 0; i < data.length; i++) {
+            if (data[i].type == "contextual") {
+              if (data[i].label === item) {
+                //this.myVarString = data[i].label;
+                axios.delete("http://localhost:8081/label/" + data[i]._id);
+                //this.myVarId = data[i]._id;
+              }
+            }
+          }
+        });
+      // .then(
+      //   setTimeout(function() {
+      //     axios.delete("http://localhost:8081/label" + this.myVarId);
+      //     alert("succes");
+      //   }, 500)
+      // );
     },
     getString(currentLabel) {
       setTimeout(function() {
