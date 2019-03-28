@@ -120,7 +120,8 @@ export default {
       checkboxItems: [],
       chips: [],
       items: ["Streaming", "Eating"],
-      selected: ["John"]
+      selected: ["John"],
+      myVarId: ""
     };
   },
   watch: {
@@ -160,7 +161,27 @@ export default {
       this.chips = [...this.chips];
     },
     alertMe(item) {
-      alert("hi" + item + this.counter);
+      //alert("hi" + item + this.counter);
+      fetch("http://localhost:8081/label")
+        .then(response => response.json())
+        //.then(data => console.log(JSON.stringify(data)))
+        .then(data => {
+          for (let i = 0; i < data.length; i++) {
+            if (data[i].type == "categorical") {
+              if (data[i].label === item) {
+                //this.myVarString = data[i].label;
+                axios.delete("http://localhost:8081/label/" + data[i]._id);
+                //this.myVarId = data[i]._id;
+              }
+            }
+          }
+        });
+      // .then(
+      //   setTimeout(function() {
+      //     axios.delete("http://localhost:8081/label" + this.myVarId);
+      //     alert("succes");
+      //   }, 500)
+      // );
       this.counter++;
     },
     insertLabel() {
