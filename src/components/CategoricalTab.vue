@@ -81,6 +81,7 @@
 <script>
 import axios from "axios";
 import md5 from "md5";
+import { backendHost } from "@/assets/js/backend.js";
 export default {
   props: {
     contents: Array,
@@ -88,7 +89,7 @@ export default {
   },
   mounted() {
     //alert("hi");
-    fetch("http://localhost:8081/label")
+    fetch(backendHost + "/label")
       .then(response => response.json())
       //.then(data => console.log(JSON.stringify(data)))
       .then(data => {
@@ -135,7 +136,7 @@ export default {
     },
     actualContent: function() {
       for (let i = 0; i < this.actualContent.length; i++) {
-        axios.post("http://localhost:8081/content", {
+        axios.post(backendHost + "/content", {
           _id: md5(this.actualContent[i]),
           content: this.actualContent[i],
           file_id: this.file
@@ -162,7 +163,7 @@ export default {
     },
     alertMe(item) {
       //alert("hi" + item + this.counter);
-      fetch("http://localhost:8081/label")
+      fetch(backendHost + "/label")
         .then(response => response.json())
         //.then(data => console.log(JSON.stringify(data)))
         .then(data => {
@@ -170,7 +171,7 @@ export default {
             if (data[i].type == "categorical") {
               if (data[i].label === item) {
                 //this.myVarString = data[i].label;
-                axios.delete("http://localhost:8081/label/" + data[i]._id);
+                axios.delete(backendHost + "/label/" + data[i]._id);
                 //this.myVarId = data[i]._id;
               }
             }
@@ -185,7 +186,7 @@ export default {
       this.counter++;
     },
     insertLabel() {
-      axios.post("http://localhost:8081/label", {
+      axios.post(backendHost + "/label", {
         label: this.chips[this.chips.length - 1],
         type: "categorical"
       });
@@ -198,7 +199,7 @@ export default {
         return;
       } else {
         if (this.radios === "Multi-class") {
-          axios.post("http://localhost:8081/labeledcontent", {
+          axios.post(backendHost + "/labeledcontent", {
             label: this.selectedRadioCategory,
             type: "categorical",
             file_id: this.file,
@@ -206,7 +207,7 @@ export default {
           });
           // alert(this.actualContent[this.index]);
         } else {
-          axios.post("http://localhost:8081/labeledcontent", {
+          axios.post(backendHost + "/labeledcontent", {
             label: this.checkboxItems,
             type: "categorical",
             file_id: this.file,

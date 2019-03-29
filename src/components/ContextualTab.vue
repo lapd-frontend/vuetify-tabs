@@ -67,6 +67,7 @@
 import { mainHighlighter } from "@/assets/js/highlight.js";
 import axios from "axios";
 import md5 from "md5";
+import { backendHost } from "@/assets/js/backend.js";
 
 export default {
   props: {
@@ -74,7 +75,7 @@ export default {
     file: String
   },
   mounted() {
-    fetch("http://localhost:8081/label")
+    fetch(backendHost + "/label")
       .then(response => response.json())
       //.then(data => console.log(JSON.stringify(data)))
       .then(data => {
@@ -99,7 +100,8 @@ export default {
       actualContent: [],
       chips: [],
       items: ["Streaming", "Eating"],
-      selected: ["John"]
+      selected: ["John"],
+      counter: 0
     };
   },
   // watch: {
@@ -120,7 +122,7 @@ export default {
     },
     actualContent: function() {
       for (let i = 0; i < this.actualContent.length; i++) {
-        axios.post("http://localhost:8081/content", {
+        axios.post(backendHost + "/content", {
           _id: md5(this.actualContent[i]),
           content: this.actualContent[i],
           file_id: this.file
@@ -151,7 +153,7 @@ export default {
       }
     },
     insertLabel() {
-      axios.post("http://localhost:8081/label", {
+      axios.post(backendHost + "/label", {
         label: this.chips[this.chips.length - 1],
         type: "contextual"
       });
@@ -163,7 +165,7 @@ export default {
     },
     alertMe(item) {
       //alert("hi" + item + this.counter);
-      fetch("http://localhost:8081/label")
+      fetch(backendHost + "/label")
         .then(response => response.json())
         //.then(data => console.log(JSON.stringify(data)))
         .then(data => {
@@ -171,7 +173,7 @@ export default {
             if (data[i].type == "contextual") {
               if (data[i].label === item) {
                 //this.myVarString = data[i].label;
-                axios.delete("http://localhost:8081/label/" + data[i]._id);
+                axios.delete(backendHost + "/label/" + data[i]._id);
                 //this.myVarId = data[i]._id;
               }
             }
@@ -186,17 +188,17 @@ export default {
     },
     getString(currentLabel) {
       setTimeout(function() {
-        fetch("http://localhost:8081/text")
+        fetch(backendHost + "/text")
           .then(response => response.json())
           //.then(data => console.log(JSON.stringify(data)))
           .then(data => (this.tempstring = data[data.length - 1].text));
       }, 100);
       setTimeout(function() {
-        axios.post("http://localhost:8081/labeledcontent", {
+        axios.post(backendHost + "/labeledcontent", {
           label: currentLabel,
           type: "contextual",
           file_id: this.file,
-          content_id: this.tempstring
+          content_id: md5(this.tempstring)
         });
       }, 200);
     }
